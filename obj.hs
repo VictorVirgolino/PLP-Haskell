@@ -8,10 +8,20 @@ data Achado = Achado
   categoria :: String
  }deriving Show
 
+data Perdido = Perdido
+ {
+  ondeEsqueceu :: String ,
+  quandoEsqueceu :: String ,
+  dono :: String ,
+  nomeObjetoEsc :: String ,
+  descricaoEsc :: String ,
+  categoriaEsc :: String
+ }deriving Show
+
 main :: IO()
 main = do
  
- programa 11 []
+ programa 11 [] []
  -- let bola = Achado {ondeAchou = "LCC2", 
  --                    quandoAchou = "01/01/2019",
  --                    quemAchou = "Victor",
@@ -29,19 +39,12 @@ main = do
  -- let achados = adicionaAchado (adicionaAchado novo bola) caneta
  -- mapM_ print achados
 
-
-
-adicionaAchado :: [Achado] -> Achado -> [Achado]
-adicionaAchado [] novo = [novo] 
-adicionaAchado (x:xs) novo = [x] ++ (adicionaAchado xs novo)
-
-
-programa :: Int -> [Achado] ->  IO()
-programa 0 _ = do
+programa :: Int -> [Achado] -> [Perdido] ->  IO()
+programa 0 _ _ = do
  putStrLn ""
  putStrLn "Fim do Programa"
 
-programa 11 achados = do
+programa 11 achados perdidos = do
  
  putStrLn ""
  putStrLn "Escolha a opcao:"
@@ -61,20 +64,51 @@ programa 11 achados = do
  putStrLn ""
  
  opcao <- readLn :: IO Int
- operacoes opcao achados
+ operacoes opcao achados perdidos
 
-programa _ achados = do
+programa _ achados perdidos = do
  putStrLn ""
  putStrLn "Operacao Invalida"
  putStrLn ""
- programa 11 achados
+ programa 11 achados perdidos
 
 
-operacoes :: Int -> [Achado] -> IO()
+operacoes :: Int -> [Achado] -> [Perdido] -> IO()
 
--- operacoes 1 achados = do
+operacoes 1 achados perdidos = do
 
-operacoes 2 achados = do
+ --Cadastrar Objeto Achado 
+ putStrLn ""
+ putStrLn "Local que Esqueceu:"
+ localEsc <- getLine
+ putStrLn ""
+ putStrLn "Data que Perdeu:"
+ dataEsc <- getLine
+ putStrLn ""
+ putStrLn "Nome do Dono:"
+ donoEsc <- getLine
+ putStrLn ""
+ putStrLn "Nome do Objeto:"
+ nomeObjEsceu <- getLine
+ putStrLn ""
+ putStrLn "Descreva o Objeto em Algumas Linhas:"
+ descricaoEsceu <- getLine
+ putStrLn ""
+ putStrLn "Categoria do Objeto:"
+ categoriaEsceu <- getLine
+ putStrLn ""
+
+ --cria o novo objeto achado
+ let novoPerdido = Perdido {ondeEsqueceu = localEsc, 
+                            quandoEsqueceu = dataEsc,
+                            dono = donoEsc,
+                            nomeObjetoEsc = nomeObjEsceu,
+                            descricaoEsc = descricaoEsceu,
+                            categoriaEsc = categoriaEsceu
+                           }
+ programa 11 achados (adicionaPerdido perdidos novoPerdido)
+
+operacoes 2 achados perdidos = do
  
  --Cadastrar Objeto Achado 
  putStrLn ""
@@ -96,6 +130,7 @@ operacoes 2 achados = do
  putStrLn "Categoria do Objeto:"
  categoriaEnc <- getLine
  putStrLn ""
+
  --cria o novo objeto achado
  let novoAchado = Achado {ondeAchou = localEnc, 
                        quandoAchou = dataEnc,
@@ -104,16 +139,22 @@ operacoes 2 achados = do
                        descricao = descricaoEnc,
                        categoria = categoriaEnc
                       }
- programa 11 (adicionaAchado achados novoAchado)
+ programa 11 (adicionaAchado achados novoAchado) perdidos
 
 
--- operacoes 3 = do
+operacoes 3 achados perdidos= do
+ 
+ -- Lista dos  Objetos Perdidos
+ putStrLn ""
+ imprimirPerdidos perdidos
+ programa 11 achados perdidos
 
-operacoes 4 achados= do
+operacoes 4 achados perdidos= do
 
  -- Lista dos  Objetos Achados
  putStrLn ""
  imprimirAchados achados
+ programa 11 achados perdidos
 
 -- operacoes 5 = do
 
@@ -127,10 +168,17 @@ operacoes 4 achados= do
 
 -- operacoes 10 = do
 
-operacoes _ achados = do
- programa 11 achados
+operacoes _ achados perdidos = do
+ programa 11 achados perdidos
 
 
+--Objeto Achado
+
+adicionaAchado :: [Achado] -> Achado -> [Achado]
+adicionaAchado [] novo = [novo] 
+adicionaAchado (x:xs) novo = [x] ++ (adicionaAchado xs novo)
+
+--Imprimir Lista de Objetos Achados
 
 imprimirAchados :: [Achado] -> IO()
 imprimirAchados [] = do
@@ -148,8 +196,7 @@ imprimirAchados (x:xs) = do
  putStrLn ""
  imprimirAchados xs
 
-
-
+--Prints de Achado
 
 printLocalAchado :: Achado -> String
 printLocalAchado (Achado {ondeAchou = onde} ) = "O Objeto foi encontrado  em: " ++ onde
@@ -167,4 +214,50 @@ printDescricaoAchado :: Achado -> String
 printDescricaoAchado (Achado {descricao = desc} ) = "Descricao do Objeto:" ++ desc 
 
 printCategoriaAchado :: Achado -> String
-printCategoriaAchado (Achado {categoria = cate} ) = "Categoria do Objeto: " ++ cate 
+printCategoriaAchado (Achado {categoria = cate} ) = "Categoria do Objeto: " ++ cate
+
+
+--Objeto Perdido
+
+adicionaPerdido :: [Perdido] -> Perdido -> [Perdido]
+adicionaPerdido [] novo = [novo] 
+adicionaPerdido (x:xs) novo = [x] ++ (adicionaPerdido xs novo)
+
+--Imprimir Lista de Objetos PPerdidos
+
+imprimirPerdidos :: [Perdido] -> IO()
+imprimirPerdidos [] = do
+ putStrLn ""
+ putStrLn "Fim da Lista"
+ putStrLn ""
+imprimirPerdidos (x:xs) = do
+ putStrLn ""
+ putStrLn (printLocalPerdido x)
+ putStrLn (printDataPerdido x)
+ putStrLn (printDonoPerdido x)
+ putStrLn (printNomeObjPerdido x)
+ putStrLn (printDescricaoPerdido x)
+ putStrLn (printCategoriaPerdido x)
+ putStrLn ""
+ imprimirPerdidos xs
+
+-- prints de Perdido
+
+printLocalPerdido :: Perdido -> String
+printLocalPerdido (Perdido {ondeEsqueceu = onde} ) = "O Objeto foi esquecido  em: " ++ onde
+
+printDataPerdido :: Perdido -> String
+printDataPerdido (Perdido {quandoEsqueceu = quando} ) = "Data: " ++ quando
+
+printDonoPerdido :: Perdido -> String
+printDonoPerdido (Perdido {dono = dono } ) = "Dono:" ++ dono
+
+printNomeObjPerdido :: Perdido -> String
+printNomeObjPerdido (Perdido {nomeObjetoEsc = nome} ) = "Nome do Objeto:" ++ nome 
+
+printDescricaoPerdido :: Perdido -> String
+printDescricaoPerdido (Perdido {descricaoEsc = desc} ) = "Descricao do Objeto:" ++ desc 
+
+printCategoriaPerdido :: Perdido -> String
+printCategoriaPerdido (Perdido {categoriaEsc = cate} ) = "Categoria do Objeto: " ++ cate
+
